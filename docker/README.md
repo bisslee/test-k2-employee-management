@@ -108,13 +108,15 @@ Após o container estar rodando, execute o script SQL manualmente:
 
 **Opção 1: Via docker exec**
 ```bash
-docker exec -i biss-employee-management-db /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "YourStrong@Password123" -i /scripts/01-create-user.sql
+docker exec -i biss-employee-management-db /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "YourStrong@Password123" -C -i /scripts/01-create-user.sql
 ```
 
 **Opção 2: Via arquivo SQL local**
 ```bash
-docker exec -i biss-employee-management-db /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "YourStrong@Password123" < init-db/01-create-user.sql
+docker exec -i biss-employee-management-db /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "YourStrong@Password123" -C < init-db/01-create-user.sql
 ```
+
+**Nota**: A flag `-C` é necessária para confiar no certificado SSL auto-assinado do SQL Server.
 
 **Opção 3: Usando SQL Server Management Studio ou Azure Data Studio**
 Conecte-se ao servidor e execute o conteúdo do arquivo `init-db/01-create-user.sql`
