@@ -330,3 +330,6 @@ storybook-static
 ## Temporary folders
 tmp/
 temp/
+
+# Reference project (not to be committed)
+back/KbSports.Core/

@@ -1,0 +1,14 @@
+<Solution>
+  <Folder Name="/Biss.EmployeeManagement/" />
+  <Folder Name="/Biss.EmployeeManagement/test/">
+    <Project Path="Biss.EmployeeManagement/test/Biss.EmployeeManagement.Tests/Biss.EmployeeManagement.Tests.csproj" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="Biss.EmployeeManagement/src/Biss.EmployeeManagement.Api/Biss.EmployeeManagement.Api.csproj" />
+    <Project Path="Biss.EmployeeManagement/src/Biss.EmployeeManagement.Application/Biss.EmployeeManagement.Application.csproj" />
+    <Project Path="Biss.EmployeeManagement/src/Biss.EmployeeManagement.CrossCutting/Biss.EmployeeManagement.CrossCutting.csproj" />
+    <Project Path="Biss.EmployeeManagement/src/Biss.EmployeeManagement.Domain/Biss.EmployeeManagement.Domain.csproj" />
+    <Project Path="Biss.EmployeeManagement/src/Biss.EmployeeManagement.Infrastructure/Biss.EmployeeManagement.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/test/" />
+</Solution>

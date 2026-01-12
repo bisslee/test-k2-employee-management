@@ -1,0 +1,14 @@
+﻿using Biss.EmployeeManagement.Domain.Entities;
+using System.Threading.Tasks;
+
+namespace Biss.EmployeeManagement.Domain.Repositories
+{
+    public interface IWriteRepository<TEntity> where TEntity : class
+    {
+        Task<bool> Add(TEntity entity);
+        Task<bool> Update(TEntity entity);
+        Task<bool> Delete(TEntity entity);
+        Task<bool> Execute(string procedure);
+
+    }
+}
