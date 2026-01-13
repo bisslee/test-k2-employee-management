@@ -104,5 +104,131 @@ namespace Biss.EmployeeManagement.Domain.Resources {
                 return ResourceManager.GetString("EMPLOYEE_NOT_FOUND", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An error occurred.
+        /// </summary>
+        public static string GENERAL_ERROR {
+            get {
+                return ResourceManager.GetString("GENERAL_ERROR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid document.
+        /// </summary>
+        public static string INVALID_DOCUMENT {
+            get {
+                return ResourceManager.GetString("INVALID_DOCUMENT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid email.
+        /// </summary>
+        public static string INVALID_EMAIL {
+            get {
+                return ResourceManager.GetString("INVALID_EMAIL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid ID.
+        /// </summary>
+        public static string INVALID_ID {
+            get {
+                return ResourceManager.GetString("INVALID_ID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid phone.
+        /// </summary>
+        public static string INVALID_PHONE {
+            get {
+                return ResourceManager.GetString("INVALID_PHONE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Password must not exceed 255 characters.
+        /// </summary>
+        public static string MAX_LENGTH_PASSWORD {
+            get {
+                return ResourceManager.GetString("MAX_LENGTH_PASSWORD", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Name must be at least 3 characters long..
+        /// </summary>
+        public static string MIN_LENGTH_NAME {
+            get {
+                return ResourceManager.GetString("MIN_LENGTH_NAME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Password must be at least 8 characters long.
+        /// </summary>
+        public static string MIN_LENGTH_PASSWORD {
+            get {
+                return ResourceManager.GetString("MIN_LENGTH_PASSWORD", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Document is required.
+        /// </summary>
+        public static string REQUIRED_DOCUMENT {
+            get {
+                return ResourceManager.GetString("REQUIRED_DOCUMENT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Required Email.
+        /// </summary>
+        public static string REQUIRED_EMAIL {
+            get {
+                return ResourceManager.GetString("REQUIRED_EMAIL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ID is required.
+        /// </summary>
+        public static string REQUIRED_ID {
+            get {
+                return ResourceManager.GetString("REQUIRED_ID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Name is required.
+        /// </summary>
+        public static string REQUIRED_NAME {
+            get {
+                return ResourceManager.GetString("REQUIRED_NAME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Password is required!.
+        /// </summary>
+        public static string REQUIRED_PASSWORD {
+            get {
+                return ResourceManager.GetString("REQUIRED_PASSWORD", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Telephone is required!.
+        /// </summary>
+        public static string REQUIRED_PHONE {
+            get {
+                return ResourceManager.GetString("REQUIRED_PHONE", resourceCulture);
+            }
+        }
     }
 }

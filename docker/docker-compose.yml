@@ -45,6 +45,21 @@ services:
     volumes:
       - ./logs:/app/logs
 
+  frontend:
+    build:
+      context: ../front/biss-employee-management
+      dockerfile: Dockerfile
+    container_name: biss-employee-management-frontend
+    environment:
+      - VITE_API_BASE_URL=${FRONTEND_API_URL:-http://api:8080}
+    ports:
+      - "${FRONTEND_PORT:-5173}:80"
+    depends_on:
+      - api
+    networks:
+      - biss-employee-network
+    restart: unless-stopped
+
 volumes:
   sqlserver_data:
     driver: local
