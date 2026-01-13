@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="EMPLOYEE_NOT_FOUND" xml:space="preserve">
+    <value>Funcionário não encontrado: {0}</value>
+    <comment>Employee not found message</comment>
+  </data>
+  <data name="EMPLOYEE_EMAIL_ALREADY_EXISTS" xml:space="preserve">
+    <value>Funcionário com email '{0}' já existe.</value>
+    <comment>Employee email already exists message</comment>
+  </data>
+  <data name="EMPLOYEE_EMAIL_ALREADY_EXISTS_WITH_ID" xml:space="preserve">
+    <value>Funcionário com email '{0}' já existe (ID: {1}).</value>
+    <comment>Employee email already exists with ID message</comment>
+  </data>
+  <data name="EMPLOYEE_DOCUMENT_ALREADY_EXISTS" xml:space="preserve">
+    <value>Funcionário com documento '{0}' já existe.</value>
+    <comment>Employee document already exists message</comment>
+  </data>
+  <data name="EMPLOYEE_DOCUMENT_ALREADY_EXISTS_WITH_ID" xml:space="preserve">
+    <value>Funcionário com documento '{0}' já existe (ID: {1}).</value>
+    <comment>Employee document already exists with ID message</comment>
+  </data>
+  <data name="GENERAL_ERROR" xml:space="preserve">
+    <value>Ocorreu um erro</value>
+    <comment>General error message</comment>
+  </data>
+  <data name="REQUIRED_EMAIL" xml:space="preserve">
+    <value>E-mail é obrigatório</value>
+    <comment>Required Email</comment>
+  </data>
+  <data name="INVALID_EMAIL" xml:space="preserve">
+    <value>E-mail inválido</value>
+    <comment>Invalid email</comment>
+  </data>
+  <data name="REQUIRED_PASSWORD" xml:space="preserve">
+    <value>Senha é obrigatória!</value>
+    <comment>Password is required!</comment>
+  </data>
+  <data name="MIN_LENGTH_PASSWORD" xml:space="preserve">
+    <value>Senha deve ter no mínimo 8 caracteres</value>
+    <comment>Password must be at least 8 characters long</comment>
+  </data>
+  <data name="MAX_LENGTH_PASSWORD" xml:space="preserve">
+    <value>Senha não deve exceder 255 caracteres</value>
+    <comment>Password must not exceed 255 characters</comment>
+  </data>
+  <data name="REQUIRED_PHONE" xml:space="preserve">
+    <value>Telefone é obrigatório!</value>
+    <comment>Telephone is required!</comment>
+  </data>
+  <data name="INVALID_PHONE" xml:space="preserve">
+    <value>Telefone inválido</value>
+    <comment>Invalid phone</comment>
+  </data>
+  <data name="REQUIRED_NAME" xml:space="preserve">
+    <value>Nome é obrigatório</value>
+    <comment>Name is required</comment>
+  </data>
+  <data name="MIN_LENGTH_NAME" xml:space="preserve">
+    <value>Nome deve ter no mínimo 3 caracteres.</value>
+    <comment>Name must be at least 3 characters long.</comment>
+  </data>
+  <data name="REQUIRED_DOCUMENT" xml:space="preserve">
+    <value>Documento é obrigatório</value>
+    <comment>Document is required</comment>
+  </data>
+  <data name="INVALID_DOCUMENT" xml:space="preserve">
+    <value>Documento inválido</value>
+    <comment>Invalid document</comment>
+  </data>
+  <data name="REQUIRED_ID" xml:space="preserve">
+    <value>ID é obrigatório</value>
+    <comment>ID required validation message</comment>
+  </data>
+  <data name="INVALID_ID" xml:space="preserve">
+    <value>ID inválido</value>
+    <comment>Invalid ID</comment>
+  </data>
+</root>

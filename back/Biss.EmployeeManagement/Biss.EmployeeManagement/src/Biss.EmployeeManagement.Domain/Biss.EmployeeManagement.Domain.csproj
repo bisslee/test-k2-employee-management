@@ -1,0 +1,40 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="System.Text.Json" Version="8.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Resources\ResourceApp.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ResourceApp.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Resources\ResourceApp.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>ResourceApp.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\ResourceApp.en-us.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <DependentUpon>ResourceApp.resx</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\ResourceApp.pt-BR.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <DependentUpon>ResourceApp.resx</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\ResourceApp.es-MX.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <DependentUpon>ResourceApp.resx</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+
+</Project>

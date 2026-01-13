@@ -21,6 +21,30 @@ services:
       start_period: 30s
     restart: unless-stopped
 
+  api:
+    build:
+      context: ../back/Biss.EmployeeManagement/Biss.EmployeeManagement/src
+      dockerfile: Biss.EmployeeManagement.Api/Dockerfile
+    container_name: biss-employee-management-api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__DefaultConnection=Server=sqlserver,1433;Database=${DB_NAME:-EmployeeManagement};User Id=${DB_USER:-employee_user};Password=${DB_USER_PASSWORD:-Employee@Password123};TrustServerCertificate=True;
+      - Security__JwtSettings__SecretKey=${JWT_SECRET_KEY:-YourSuperSecretKeyForJWTTokenGenerationMustBeAtLeast32CharactersLong!}
+      - Security__JwtSettings__Issuer=Biss.EmployeeManagement
+      - Security__JwtSettings__Audience=Biss.EmployeeManagement.Users
+      - Security__JwtSettings__ExpirationMinutes=60
+    ports:
+      - "${API_PORT:-8080}:8080"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    networks:
+      - biss-employee-network
+    restart: unless-stopped
+    volumes:
+      - ./logs:/app/logs
+
 volumes:
   sqlserver_data:
     driver: local
