@@ -58,4 +58,80 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="EMPLOYEE_NOT_FOUND" xml:space="preserve">
+    <value>Employee not found: {0}</value>
+    <comment>Employee not found message</comment>
+  </data>
+  <data name="EMPLOYEE_EMAIL_ALREADY_EXISTS" xml:space="preserve">
+    <value>Employee with email '{0}' already exists.</value>
+    <comment>Employee email already exists message</comment>
+  </data>
+  <data name="EMPLOYEE_EMAIL_ALREADY_EXISTS_WITH_ID" xml:space="preserve">
+    <value>Employee with email '{0}' already exists (ID: {1}).</value>
+    <comment>Employee email already exists with ID message</comment>
+  </data>
+  <data name="EMPLOYEE_DOCUMENT_ALREADY_EXISTS" xml:space="preserve">
+    <value>Employee with document number '{0}' already exists.</value>
+    <comment>Employee document already exists message</comment>
+  </data>
+  <data name="EMPLOYEE_DOCUMENT_ALREADY_EXISTS_WITH_ID" xml:space="preserve">
+    <value>Employee with document number '{0}' already exists (ID: {1}).</value>
+    <comment>Employee document already exists with ID message</comment>
+  </data>
+  <data name="GENERAL_ERROR" xml:space="preserve">
+    <value>An error occurred</value>
+    <comment>General error message</comment>
+  </data>
+  <data name="REQUIRED_EMAIL" xml:space="preserve">
+    <value>Required Email</value>
+    <comment>Required Email</comment>
+  </data>
+  <data name="INVALID_EMAIL" xml:space="preserve">
+    <value>Invalid email</value>
+    <comment>Invalid email</comment>
+  </data>
+  <data name="REQUIRED_PASSWORD" xml:space="preserve">
+    <value>Password is required!</value>
+    <comment>Password is required!</comment>
+  </data>
+  <data name="MIN_LENGTH_PASSWORD" xml:space="preserve">
+    <value>Password must be at least 8 characters long</value>
+    <comment>Password must be at least 8 characters long</comment>
+  </data>
+  <data name="MAX_LENGTH_PASSWORD" xml:space="preserve">
+    <value>Password must not exceed 255 characters</value>
+    <comment>Password must not exceed 255 characters</comment>
+  </data>
+  <data name="REQUIRED_PHONE" xml:space="preserve">
+    <value>Telephone is required!</value>
+    <comment>Telephone is required!</comment>
+  </data>
+  <data name="INVALID_PHONE" xml:space="preserve">
+    <value>Invalid phone</value>
+    <comment>Invalid phone</comment>
+  </data>
+  <data name="REQUIRED_NAME" xml:space="preserve">
+    <value>Name is required</value>
+    <comment>Name is required</comment>
+  </data>
+  <data name="MIN_LENGTH_NAME" xml:space="preserve">
+    <value>Name must be at least 3 characters long.</value>
+    <comment>Name must be at least 3 characters long.</comment>
+  </data>
+  <data name="REQUIRED_DOCUMENT" xml:space="preserve">
+    <value>Document is required</value>
+    <comment>Document is required</comment>
+  </data>
+  <data name="INVALID_DOCUMENT" xml:space="preserve">
+    <value>Invalid document</value>
+    <comment>Invalid document</comment>
+  </data>
+  <data name="REQUIRED_ID" xml:space="preserve">
+    <value>ID is required</value>
+    <comment>ID required validation message</comment>
+  </data>
+  <data name="INVALID_ID" xml:space="preserve">
+    <value>Invalid ID</value>
+    <comment>Invalid ID</comment>
+  </data>
 </root>

@@ -1,5 +1,4 @@
-﻿using Biss.EmployeeManagement.Domain.Entities;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace Biss.EmployeeManagement.Domain.Repositories
 {
@@ -8,7 +7,6 @@ namespace Biss.EmployeeManagement.Domain.Repositories
         Task<bool> Add(TEntity entity);
         Task<bool> Update(TEntity entity);
         Task<bool> Delete(TEntity entity);
-        Task<bool> Execute(string procedure);
-
+        Task<bool> ExecuteSql(string sql, params object[] parameters);
     }
 }

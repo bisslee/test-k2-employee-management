@@ -11,18 +11,29 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Resources\ResourceApp.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ResourceApp.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
     <EmbeddedResource Update="Resources\ResourceApp.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>ResourceApp.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Update="Resources\ResourceApp.en-us.resx">
       <Generator>ResXFileCodeGenerator</Generator>
+      <DependentUpon>ResourceApp.resx</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Update="Resources\ResourceApp.pt-BR.resx">
       <Generator>ResXFileCodeGenerator</Generator>
+      <DependentUpon>ResourceApp.resx</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Update="Resources\ResourceApp.es-MX.resx">
       <Generator>ResXFileCodeGenerator</Generator>
+      <DependentUpon>ResourceApp.resx</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
 

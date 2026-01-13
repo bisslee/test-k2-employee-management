@@ -1,6 +1,6 @@
 # 🐳 Docker Configuration
 
-Configuração Docker para o projeto Employee Management, incluindo SQL Server.
+Configuração Docker para o projeto Employee Management, incluindo SQL Server e API.
 
 ## 📋 Pré-requisitos
 
@@ -25,11 +25,13 @@ cp env.template .env
 - `DB_NAME`: Nome do banco de dados (padrão: `EmployeeManagement`)
 - `DB_USER`: Nome do usuário SQL do projeto (padrão: `employee_user`)
 - `DB_USER_PASSWORD`: Senha do usuário SQL do projeto (padrão: `Employee@Password123`)
+- `API_PORT`: Porta da API (padrão: `8080`)
+- `JWT_SECRET_KEY`: Chave secreta para geração de tokens JWT (padrão: `YourSuperSecretKeyForJWTTokenGenerationMustBeAtLeast32CharactersLong!`)
 
-### 2. Subir o SQL Server
+### 2. Subir todos os serviços (SQL Server + API)
 
 ```bash
-docker-compose up -d
+docker-compose up -d --build
 ```
 
 ### 3. Verificar se está rodando
@@ -38,13 +40,20 @@ docker-compose up -d
 docker-compose ps
 ```
 
-### 4. Parar os containers
+### 4. Acessar a API
+
+Após os containers iniciarem, a API estará disponível em:
+- **API**: http://localhost:8080
+- **Swagger**: http://localhost:8080/swagger
+- **Health Check**: http://localhost:8080/health
+
+### 5. Parar os containers
 
 ```bash
 docker-compose down
 ```
 
-### 5. Parar e remover volumes (⚠️ apaga os dados)
+### 6. Parar e remover volumes (⚠️ apaga os dados)
 
 ```bash
 docker-compose down -v
@@ -94,7 +103,12 @@ docker-compose down -v
 
 ### Rede
 
-O SQL Server está na rede `biss-employee-network`, que será compartilhada com a API e Frontend quando configurados.
+Todos os serviços estão na rede `biss-employee-network`, permitindo comunicação entre SQL Server, API e Frontend.
+
+### Serviços
+
+- **sqlserver**: SQL Server 2022
+- **api**: API .NET 8 (porta 8080)
 
 ## 📝 Scripts de inicialização
 
@@ -170,4 +184,15 @@ docker-compose up -d
 ## 📦 Versões
 
 - **SQL Server**: 2022-latest
+- **.NET**: 8.0
 - **Docker Compose**: 3.8
+
+## 🔐 Usuário Master
+
+Após a inicialização, um usuário master é criado automaticamente:
+
+- **Email**: `admin@employee.com`
+- **Senha**: `admin@123`
+- **Role**: `Director`
+
+Use essas credenciais para fazer login na API.

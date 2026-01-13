@@ -22,7 +22,7 @@ namespace Biss.EmployeeManagement.Domain.Resources {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "18.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class ResourceApp {
+    public class ResourceApp {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace Biss.EmployeeManagement.Domain.Resources {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Biss.EmployeeManagement.Domain.Resources.ResourceApp", typeof(ResourceApp).Assembly);
@@ -51,12 +51,57 @@ namespace Biss.EmployeeManagement.Domain.Resources {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
             set {
                 resourceCulture = value;
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Employee with document number &apos;{0}&apos; already exists..
+        /// </summary>
+        public static string EMPLOYEE_DOCUMENT_ALREADY_EXISTS {
+            get {
+                return ResourceManager.GetString("EMPLOYEE_DOCUMENT_ALREADY_EXISTS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Employee with document number &apos;{0}&apos; already exists (ID: {1})..
+        /// </summary>
+        public static string EMPLOYEE_DOCUMENT_ALREADY_EXISTS_WITH_ID {
+            get {
+                return ResourceManager.GetString("EMPLOYEE_DOCUMENT_ALREADY_EXISTS_WITH_ID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Employee with email &apos;{0}&apos; already exists..
+        /// </summary>
+        public static string EMPLOYEE_EMAIL_ALREADY_EXISTS {
+            get {
+                return ResourceManager.GetString("EMPLOYEE_EMAIL_ALREADY_EXISTS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Employee with email &apos;{0}&apos; already exists (ID: {1})..
+        /// </summary>
+        public static string EMPLOYEE_EMAIL_ALREADY_EXISTS_WITH_ID {
+            get {
+                return ResourceManager.GetString("EMPLOYEE_EMAIL_ALREADY_EXISTS_WITH_ID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Employee not found: {0}.
+        /// </summary>
+        public static string EMPLOYEE_NOT_FOUND {
+            get {
+                return ResourceManager.GetString("EMPLOYEE_NOT_FOUND", resourceCulture);
             }
         }
     }

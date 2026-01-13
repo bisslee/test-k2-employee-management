@@ -1,9 +1,9 @@
-﻿using Azure;
-using Biss.EmployeeManagement.Domain.Entities.Response;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
+﻿using Biss.EmployeeManagement.Domain.Entities.Response;
 using Microsoft.AspNetCore.Mvc;
-using System.Net;
+using Microsoft.AspNetCore.Mvc.Filters;
 using System.Collections;
+using System.Globalization;
+using System.Net;
 
 namespace Biss.EmployeeManagement.Api.Helper
 {
@@ -16,36 +16,36 @@ namespace Biss.EmployeeManagement.Api.Helper
         const string NoContentMessage = "No Content: {@Response}";
         const string InternalServerErrorMessage = "An error occurred: {@Message}";
 
-        protected ILogger Logger { get; }
+        protected readonly ILogger Logger;
 
         public BaseControllerHandle(ILogger logger)
         {
             Logger = logger;
         }
 
-        protected ApiErrorResponse GetModelStateError(ModelStateDictionary modelState)
+        [NonAction]
+        public void OnActionExecuting(ActionExecutingContext context)
         {
-            var responseError = new ApiErrorResponse();
-            List<string> errors = new();
-            foreach (var state in modelState)
+            var acceptLanguage = context.HttpContext.Request.Headers["Accept-Language"].FirstOrDefault();
+            if (!string.IsNullOrEmpty(acceptLanguage))
             {
-                foreach (var error in state.Value.Errors)
+                try
                 {
-                    errors.Add(error.ErrorMessage);
+                    var culture = new CultureInfo(acceptLanguage);
+                    CultureInfo.CurrentCulture = culture;
+                    CultureInfo.CurrentUICulture = culture;
+                }
+                catch (CultureNotFoundException)
+                {
+                    Logger.LogWarning("Invalid culture provided: {AcceptLanguage}", acceptLanguage);
                 }
             }
-
-            string combinedErrors = string.Join(", ", errors);
-            responseError.Message = combinedErrors;
-            return responseError;
         }
 
+        [NonAction]
+        public void OnActionExecuted(ActionExecutedContext context) { }
 
-        public ActionResult HandleResponse<TEntityResponse>
-        (
-            ApiResponse<TEntityResponse> response
-        )
-
+        public ActionResult HandleResponse<TEntityResponse>(ApiResponse<TEntityResponse> response)
         {
             if (response == null)
             {
@@ -55,13 +55,13 @@ namespace Biss.EmployeeManagement.Api.Helper
 
             if (!response.Success)
             {
-                Logger.LogInformation(BadRequestMessage, response);
+                Logger.LogInformation(BadRequestMessage, response.Error?.Message);
                 return BadRequest(response);
             }
 
             if (response.Data == null || response.Data.Response == null)
             {
-                Logger.LogInformation(NoContentMessage, response);
+                Logger.LogInformation(NoContentMessage, response.Error?.Message);
                 return NoContent();
             }
 
@@ -69,12 +69,12 @@ namespace Biss.EmployeeManagement.Api.Helper
             {
                 if (collection.Count == 0)
                 {
-                    Logger.LogInformation(NoContentMessage, response);
+                    Logger.LogInformation(NoContentMessage, response.Error?.Message);
                     return NoContent();
                 }
 
                 Response.Headers.Append(TotalCountHeader, collection.Count.ToString());
-                Logger.LogInformation(PartialContentMessage, response);
+                Logger.LogInformation(PartialContentMessage, response.Error?.Message);
                 return new ObjectResult(response) { StatusCode = (int)HttpStatusCode.PartialContent };
             }
 
@@ -90,9 +90,10 @@ namespace Biss.EmployeeManagement.Api.Helper
         protected ActionResult HandleException(Exception ex)
         {
             Logger.LogError(ex, InternalServerErrorMessage, ex.Message);
-            var errorResponse = new ApiErrorResponse(ex);
-            return new ObjectResult(errorResponse) { StatusCode = (int)HttpStatusCode.InternalServerError };
+            return new ObjectResult(new ErrorResponse("INTERNAL_SERVER_ERROR", ex.Message)) 
+            { 
+                StatusCode = (int)HttpStatusCode.InternalServerError 
+            };
         }
     }
-
 }

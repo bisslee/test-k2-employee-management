@@ -1,64 +1,45 @@
-
-using Biss.EmployeeManagement.CrossCutting.DependencyInjection;
-using Biss.EmployeeManagement.Infrastructure;
-using Microsoft.EntityFrameworkCore;
+using Biss.MultiSinkLogger;
+using Biss.MultiSinkLogger.ExceptionHandlers;
+using Biss.MultiSinkLogger.Http;
+using Biss.MultiSinkLogger.Extensions;
+using Biss.EmployeeManagement.Api.Extensions;
+using Serilog;
 
 namespace Biss.EmployeeManagement.Api
 {
-    public class Program
+    public static class Program
     {
-      
-
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-            var configuration = builder.Configuration;
 
-            builder.Services.AddDbContext<AppDbContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+            // Inicializa o logger com configurações do appsettings.json
+            LoggingManager.InitializeLogger(builder.Configuration);
 
-            // Add services to the container.
-            builder.Services.AddAutoMapper();
-            builder.Services.AddMediator();
-            builder.Services.AddRepository();
+            // Configura o Serilog
+            builder.Host.UseSerilog();
 
-            builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            // Adiciona o HttpClient com o HttpLoggingHandler
+            builder.Services.AddTransient<HttpLoggingHandler>();
+            builder.Services.AddTransient<IExceptionHandler, DefaultExceptionHandler>();
 
-            builder.Services.AddCors(options =>
-            {
-                options.AddPolicy("AllowMyOrigin", builder =>
-                {
-                    builder.WithOrigins(
-                        "http://localhost:3000",
-                        "http://localhost:3001",
-                        "http://localhost:5173"
-                    )
-                    .SetIsOriginAllowedToAllowWildcardSubdomains()
-                    .AllowAnyHeader()
-                    .AllowAnyMethod()
-                    .WithExposedHeaders("X-Total-Count");
-                });
-            });
+            // Configura os serviços
+            builder.Services.ConfigureServices(builder.Configuration);
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
+            // Middlewares para captura de logs
+            app.UseExceptionLogging();
+            app.UseCustomLogging();
 
-            app.UseCors("AllowMyOrigin");
+            // Aplica migrations automaticamente na inicialização
+            app.ApplyMigrations();
 
-            app.UseHttpsRedirection();
+            // Configura Middlewares
+            app.ConfigureMiddlewares();
 
-            app.UseAuthorization();
-
-            app.MapControllers();
+            // Mapear endpoint de health check
+            app.MapHealthChecks("/health");
 
             app.Run();
         }

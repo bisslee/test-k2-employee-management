@@ -2,9 +2,7 @@
 {
     public static class ServiceConstants
     {
-        // Settings Service Info
-        public const string CustomerService = "CustomerService";
-        
-
+        public const string EmployeeService = "EmployeeService";
+        public const string CorsPolicy = "BissEmployeeManagementPolicy";
     }
 }
