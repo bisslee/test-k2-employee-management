@@ -17,4 +17,5 @@ export const ROUTES = {
   LOGIN: '/login',
   EMPLOYEES: '/employees',
   CREATE_EMPLOYEE: '/employees/create',
+  EDIT_EMPLOYEE: (id: string) => `/employees/edit/${id}`,
 } as const;

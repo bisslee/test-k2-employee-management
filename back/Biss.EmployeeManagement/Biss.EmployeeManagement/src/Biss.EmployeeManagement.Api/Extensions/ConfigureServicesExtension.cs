@@ -29,8 +29,6 @@ namespace Biss.EmployeeManagement.Api.Extensions
                 options.Providers.Add<GzipCompressionProvider>();
             });
 
-            services.AddTransient<Biss.MultiSinkLogger.Http.HttpLoggingHandler>();
-            services.AddTransient<Biss.MultiSinkLogger.ExceptionHandlers.IExceptionHandler, Biss.MultiSinkLogger.ExceptionHandlers.DefaultExceptionHandler>();
 
             services.AddAutoMapper();
             services.AddMediator();
@@ -60,6 +58,7 @@ namespace Biss.EmployeeManagement.Api.Extensions
                     options.JsonSerializerOptions.PropertyNamingPolicy = jsonOptions.PropertyNamingPolicy;
                     options.JsonSerializerOptions.WriteIndented = jsonOptions.WriteIndented;
                     options.JsonSerializerOptions.DefaultIgnoreCondition = jsonOptions.DefaultIgnoreCondition;
+                    options.JsonSerializerOptions.ReferenceHandler = jsonOptions.ReferenceHandler; // Importante: evitar referências circulares
                     foreach (var converter in jsonOptions.Converters)
                     {
                         options.JsonSerializerOptions.Converters.Add(converter);

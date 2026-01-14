@@ -1,3 +1,4 @@
+using Biss.EmployeeManagement.Domain.Entities;
 using Biss.EmployeeManagement.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
@@ -23,10 +24,17 @@ namespace Biss.EmployeeManagement.Infrastructure.Repositories
         public async Task<List<TEntity>> Find(Expression<Func<TEntity, bool>> predicate)
         {
             _logger.LogDebug("Executing Find query with predicate");
-            return await Context.Set<TEntity>()
+            IQueryable<TEntity> query = Context.Set<TEntity>()
                 .AsNoTracking() // Otimização: não tracking para consultas
-                .Where(predicate)
-                .ToListAsync();
+                .Where(predicate);
+            
+            // Incluir PhoneNumbers se for Employee
+            if (typeof(TEntity) == typeof(Employee))
+            {
+                query = ((IQueryable<Employee>)query).Include(e => e.PhoneNumbers).Cast<TEntity>();
+            }
+            
+            return await query.ToListAsync();
         }
 
         public async Task<(List<TEntity>, int)> FindWithPagination
@@ -42,12 +50,18 @@ namespace Biss.EmployeeManagement.Infrastructure.Repositories
                 page, pageSize, fieldName, order);
 
             // Otimização: Executar count e data em paralelo
-            var query = Context.Set<TEntity>()
+            IQueryable<TEntity> query = Context.Set<TEntity>()
                 .AsNoTracking() // Otimização: não tracking para consultas
                 .Where(predicate);
+            
+            // Incluir PhoneNumbers se for Employee
+            if (typeof(TEntity) == typeof(Employee))
+            {
+                query = ((IQueryable<Employee>)query).Include(e => e.PhoneNumbers).Cast<TEntity>();
+            }
 
-            // Executar count e data em paralelo para melhor performance
-            var countTask = query.CountAsync();
+            // Executar count primeiro (DbContext não é thread-safe)
+            var total = await query.CountAsync();
             
             if (!string.IsNullOrEmpty(fieldName))
             {
@@ -57,16 +71,11 @@ namespace Biss.EmployeeManagement.Infrastructure.Repositories
                 query = query.OrderBy(ordering);
             }
 
-            var dataTask = query
+            // Executar data após o count
+            var data = await query
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
-
-            // Aguardar ambas as tarefas em paralelo
-            await Task.WhenAll(countTask, dataTask);
-
-            var total = await countTask;
-            var data = await dataTask;
 
             _logger.LogDebug("FindWithPagination completed. Total: {Total}, Returned: {Returned}", total, data.Count);
 
@@ -76,9 +85,17 @@ namespace Biss.EmployeeManagement.Infrastructure.Repositories
         public async Task<TEntity?> GetByIdAsync(Guid id)
         {
             _logger.LogDebug("Executing GetByIdAsync for ID: {Id}", id);
-            return await Context.Set<TEntity>()
+            IQueryable<TEntity> query = Context.Set<TEntity>()
                 .AsNoTracking() // Otimização: não tracking para consultas
-                .FirstOrDefaultAsync(e => EF.Property<Guid>(e, "Id") == id);
+                .Where(e => EF.Property<Guid>(e, "Id") == id);
+            
+            // Incluir PhoneNumbers se for Employee
+            if (typeof(TEntity) == typeof(Employee))
+            {
+                query = ((IQueryable<Employee>)query).Include(e => e.PhoneNumbers).Cast<TEntity>();
+            }
+            
+            return await query.FirstOrDefaultAsync();
         }
     }
 }

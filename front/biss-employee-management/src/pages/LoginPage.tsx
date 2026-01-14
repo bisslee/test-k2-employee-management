@@ -20,22 +20,49 @@ const LoginPage: React.FC = () => {
 
     try {
       const request: LoginRequest = { email, password };
+      console.log('[LoginPage] Enviando requisição de login:', { email });
+      
       const response = await api.post<LoginResponse>(API_ENDPOINTS.AUTH.LOGIN, request);
+
+      console.log('[LoginPage] Resposta recebida:', {
+        success: response.data.success,
+        statusCode: response.status,
+        hasToken: !!response.data.data?.response?.token,
+        hasEmployee: !!response.data.data?.response?.employee,
+        hasError: !!response.data.error,
+        errorMessage: response.data.error?.message,
+      });
 
       if (response.data.success && response.data.data?.response) {
         const { token, employee } = response.data.data.response;
         
         if (token && employee) {
+          console.log('[LoginPage] Login bem-sucedido:', {
+            employeeId: employee.id,
+            employeeEmail: employee.email,
+            employeeRole: employee.role,
+            tokenLength: token.length,
+          });
           login(token, employee);
           toast.success('Login realizado com sucesso!');
           navigate(ROUTES.EMPLOYEES);
+        } else {
+          console.warn('[LoginPage] Resposta de sucesso mas sem token ou employee:', response.data);
+          toast.error('Erro ao realizar login: dados incompletos');
         }
       } else {
+        console.warn('[LoginPage] Resposta não foi sucesso:', response.data);
         toast.error(response.data.error?.message || 'Erro ao realizar login');
       }
-    } catch (error) {
-      // Error is handled by axios interceptor
-      console.error('Login error:', error);
+    } catch (error: any) {
+      console.error('[LoginPage] Erro ao realizar login:', {
+        error,
+        response: error.response?.data,
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        email,
+      });
+      // Error is handled by axios interceptor, mas logamos aqui também
     } finally {
       setLoading(false);
     }
@@ -93,11 +120,6 @@ const LoginPage: React.FC = () => {
             )}
           </button>
         </form>
-
-        <div className="login-footer">
-          <p>Usuário master: admin@employee.com</p>
-          <p>Senha: admin@123</p>
-        </div>
       </div>
     </div>
   );

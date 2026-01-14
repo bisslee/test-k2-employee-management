@@ -107,3 +107,21 @@ export interface GetEmployeesRequest {
 }
 
 export interface GetEmployeesResponse extends ApiResponse<Employee[]> {}
+
+export interface EditEmployeeRequest {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  document: string;
+  birthDate: string;
+  role: EmployeeRole;
+  password?: string; // Opcional na edição
+  phoneNumbers: EditPhoneNumberRequest[];
+}
+
+export interface EditPhoneNumberRequest {
+  id?: string;
+  number: string;
+  type?: string;
+}

@@ -89,10 +89,20 @@ body {
 
 .btn-danger {
   color: var(--danger-color);
+  background-color: transparent;
 }
 
 .btn-danger:hover {
   background-color: rgba(239, 68, 68, 0.1);
+}
+
+.btn-danger.btn-primary {
+  background-color: var(--danger-color);
+  color: white;
+}
+
+.btn-danger.btn-primary:hover {
+  background-color: #dc2626;
 }
 
 /* Login Page */
@@ -423,6 +433,11 @@ body {
   font-size: 2rem;
 }
 
+.warning-icon {
+  color: #f59e0b;
+  font-size: 2rem;
+}
+
 .dialog-description {
   color: var(--text-secondary);
   margin-bottom: 1.5rem;
@@ -432,6 +447,63 @@ body {
   display: flex;
   justify-content: flex-end;
   gap: 1rem;
+}
+
+/* Employee Details Modal */
+.employee-details {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.detail-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.detail-row:last-child {
+  border-bottom: none;
+}
+
+.detail-row strong {
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.detail-row span {
+  color: var(--text-secondary);
+  font-size: 1rem;
+}
+
+.phone-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.phone-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  background: var(--background);
+  border-radius: 0.25rem;
+}
+
+.phone-item i {
+  color: var(--primary-color);
+}
+
+.phone-type {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  font-style: italic;
 }
 
 /* Responsive */

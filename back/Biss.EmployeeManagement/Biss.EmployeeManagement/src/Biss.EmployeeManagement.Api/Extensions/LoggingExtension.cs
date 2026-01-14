@@ -1,7 +1,7 @@
-using Biss.MultiSinkLogger;
 using Microsoft.AspNetCore.HttpLogging;
 using Serilog;
 using Serilog.Context;
+using Serilog.Events;
 
 namespace Biss.EmployeeManagement.Api.Extensions
 {
@@ -9,38 +9,24 @@ namespace Biss.EmployeeManagement.Api.Extensions
     {
         public static IServiceCollection ConfigureLogging(this IServiceCollection services, IConfiguration configuration)
         {
-            // Configura o Serilog primeiro
+            // Configura o Serilog
             var loggerConfiguration = new LoggerConfiguration()
-                .ReadFrom.Configuration(configuration)
-                .Enrich.FromLogContext();
+                .MinimumLevel.Debug()
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+                .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
+                .MinimumLevel.Override("System", LogEventLevel.Warning)
+                .Enrich.FromLogContext()
+                .Enrich.WithProperty("Application", "Biss.EmployeeManagement.Api")
+                .WriteTo.Console(
+                    outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {Properties:j}{NewLine}{Exception}")
+                .WriteTo.File(
+                    path: "logs/employee-management-.log",
+                    rollingInterval: RollingInterval.Day,
+                    retainedFileCountLimit: 30,
+                    outputTemplate: "[{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} {Level:u3}] {Message:lj} {Properties:j}{NewLine}{Exception}");
             
-            // Configura o Biss.MultiSinkLogger se a configuração estiver disponível
-            try
-            {
-                if (configuration.GetSection("LoggerManagerSettings").Exists())
-                {
-                    // O Biss.MultiSinkLogger já foi inicializado no Program.cs
-                    // Aqui apenas configuramos o Serilog para trabalhar junto
-                    loggerConfiguration
-                        .WriteTo.Console()
-                        .WriteTo.File("logs/employee-management-.log", rollingInterval: RollingInterval.Day, retainedFileCountLimit: 30);
-                }
-                else
-                {
-                    // Fallback para configuração padrão se LoggerManagerSettings não estiver configurado
-                    loggerConfiguration
-                        .WriteTo.Console()
-                        .WriteTo.File("logs/employee-management-.log", rollingInterval: RollingInterval.Day, retainedFileCountLimit: 30);
-                }
-            }
-            catch (Exception ex)
-            {
-                // Log do erro e fallback para configuração padrão
-                Console.WriteLine($"Erro ao configurar logging: {ex.Message}");
-                loggerConfiguration
-                    .WriteTo.Console()
-                    .WriteTo.File("logs/employee-management-.log", rollingInterval: RollingInterval.Day, retainedFileCountLimit: 30);
-            }
+            // Lê configurações do appsettings.json se existirem
+            loggerConfiguration.ReadFrom.Configuration(configuration);
             
             // Cria e registra o logger
             var logger = loggerConfiguration.CreateLogger();

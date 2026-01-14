@@ -1,18 +1,21 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import api from '../shared/api';
 import { API_ENDPOINTS, ROUTES } from '../shared/constants';
-import { AddEmployeeRequest, EmployeeRole } from '../shared/types';
+import { EditEmployeeRequest, EmployeeRole, Employee } from '../shared/types';
 import toast from 'react-hot-toast';
 import * as Dialog from '@radix-ui/react-dialog';
 import 'remixicon/fonts/remixicon.css';
 
-const CreateEmployeePage: React.FC = () => {
+const EditEmployeePage: React.FC = () => {
   const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
   const [loading, setLoading] = useState(false);
+  const [loadingEmployee, setLoadingEmployee] = useState(true);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   
-  const [formData, setFormData] = useState<AddEmployeeRequest>({
+  const [formData, setFormData] = useState<EditEmployeeRequest>({
+    id: id || '',
     firstName: '',
     lastName: '',
     email: '',
@@ -25,6 +28,89 @@ const CreateEmployeePage: React.FC = () => {
       { number: '', type: 'Mobile' },
     ],
   });
+
+  // Carregar dados do funcionário
+  useEffect(() => {
+    const loadEmployee = async () => {
+      if (!id) {
+        toast.error('ID do funcionário não fornecido');
+        navigate(ROUTES.EMPLOYEES);
+        return;
+      }
+
+      try {
+        setLoadingEmployee(true);
+        console.log('[EditEmployeePage] Carregando funcionário:', id);
+
+        const response = await api.get<{ success: boolean; data?: { response: Employee }; error?: any }>(
+          API_ENDPOINTS.EMPLOYEES.BY_ID(id)
+        );
+
+        console.log('[EditEmployeePage] Resposta recebida:', {
+          success: response.data.success,
+          hasData: !!response.data.data,
+          hasError: !!response.data.error,
+        });
+
+        if (response.data.success && response.data.data?.response) {
+          const employee = response.data.data.response;
+          
+          // Formatar data de nascimento para o input date (YYYY-MM-DD)
+          const birthDateFormatted = employee.birthDate 
+            ? new Date(employee.birthDate).toISOString().split('T')[0]
+            : '';
+
+          // Preparar telefones - garantir pelo menos 2 campos
+          const phoneNumbers = employee.phoneNumbers && employee.phoneNumbers.length > 0
+            ? employee.phoneNumbers.map(phone => ({
+                id: phone.id || undefined,
+                number: phone.number || '',
+                type: phone.type || 'Mobile',
+              }))
+            : [{ id: undefined, number: '', type: 'Mobile' }, { id: undefined, number: '', type: 'Mobile' }];
+
+          // Garantir pelo menos 2 campos de telefone
+          while (phoneNumbers.length < 2) {
+            phoneNumbers.push({ id: undefined, number: '', type: 'Mobile' });
+          }
+
+          setFormData({
+            id: employee.id,
+            firstName: employee.firstName || '',
+            lastName: employee.lastName || '',
+            email: employee.email || '',
+            document: employee.document || '',
+            birthDate: birthDateFormatted,
+            role: employee.role || EmployeeRole.Assistant,
+            password: '', // Não carregar senha
+            phoneNumbers: phoneNumbers,
+          });
+
+          console.log('[EditEmployeePage] Funcionário carregado com sucesso:', employee.id);
+        } else {
+          const errorMessage = response.data.error?.message || 'Erro ao carregar funcionário';
+          toast.error(errorMessage);
+          navigate(ROUTES.EMPLOYEES);
+        }
+      } catch (error: any) {
+        console.error('[EditEmployeePage] Erro ao carregar funcionário:', {
+          error,
+          response: error.response?.data,
+          status: error.response?.status,
+        });
+
+        const errorMessage = error.response?.data?.error?.message 
+          || error.response?.data?.message 
+          || 'Erro ao carregar funcionário. Tente novamente.';
+        toast.error(errorMessage);
+        navigate(ROUTES.EMPLOYEES);
+      } finally {
+        setLoadingEmployee(false);
+      }
+    };
+
+    loadEmployee();
+  }, [id, navigate]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -47,23 +133,33 @@ const CreateEmployeePage: React.FC = () => {
       // Normalizar documento removendo formatação antes de enviar
       const normalizedDocument = formData.document.replace(/\D/g, '');
       
-      const request: AddEmployeeRequest = {
+      const request: EditEmployeeRequest = {
         ...formData,
         document: normalizedDocument,
-        phoneNumbers: formData.phoneNumbers.filter((phone) => phone.number.trim() !== ''),
+        phoneNumbers: formData.phoneNumbers
+          .filter((phone) => phone.number.trim() !== '')
+          .map(phone => ({
+            id: phone.id,
+            number: phone.number.trim(),
+            type: phone.type || 'Mobile',
+          })),
+        // Remover password se estiver vazio
+        password: formData.password?.trim() || undefined,
       };
 
-      console.log('[CreateEmployeePage] Enviando requisição para criar funcionário:', {
+      console.log('[EditEmployeePage] Enviando requisição para editar funcionário:', {
+        id: request.id,
         email: request.email,
         document: request.document,
         normalizedDocument,
         phoneCount: request.phoneNumbers.length,
         role: request.role,
+        hasPassword: !!request.password,
       });
 
-      const response = await api.post(API_ENDPOINTS.EMPLOYEES.BASE, request);
+      const response = await api.put(API_ENDPOINTS.EMPLOYEES.BY_ID(request.id), request);
 
-      console.log('[CreateEmployeePage] Resposta recebida:', {
+      console.log('[EditEmployeePage] Resposta recebida:', {
         success: response.data.success,
         statusCode: response.status,
         hasData: !!response.data.data,
@@ -72,23 +168,21 @@ const CreateEmployeePage: React.FC = () => {
       });
 
       if (response.data.success) {
-        console.log('[CreateEmployeePage] Funcionário criado com sucesso:', response.data.data?.response?.id);
-        toast.success('Funcionário criado com sucesso!');
+        console.log('[EditEmployeePage] Funcionário editado com sucesso:', response.data.data?.response?.id);
+        toast.success('Funcionário editado com sucesso!');
         setShowSuccessModal(true);
-        // A navegação será feita no modal de sucesso
       } else {
-        // Se não foi sucesso, mostrar erro e não fechar o formulário
-        const errorMessage = response.data.error?.message || response.data.error?.detail || response.data.message || 'Erro ao criar funcionário';
-        console.warn('[CreateEmployeePage] Resposta não foi sucesso:', {
+        const errorMessage = response.data.error?.message || response.data.error?.detail || response.data.message || 'Erro ao editar funcionário';
+        console.warn('[EditEmployeePage] Resposta não foi sucesso:', {
           errorMessage,
           fullResponse: response.data,
         });
         toast.error(errorMessage);
         setLoading(false);
-        return; // Não navegar nem mostrar modal de sucesso
+        return;
       }
     } catch (error: any) {
-      console.error('[CreateEmployeePage] Erro ao criar funcionário:', {
+      console.error('[EditEmployeePage] Erro ao editar funcionário:', {
         error,
         response: error.response?.data,
         status: error.response?.status,
@@ -96,20 +190,17 @@ const CreateEmployeePage: React.FC = () => {
         requestData: error.config?.data,
       });
 
-      // Verificar se é um erro do axios com resposta da API
       if (error.response?.data?.error?.message) {
         toast.error(error.response.data.error.message);
       } else if (error.response?.data?.error?.detail) {
-        // Pode ter detalhes adicionais no error.detail
         toast.error(error.response.data.error.detail);
       } else if (error.response?.data?.message) {
         toast.error(error.response.data.message);
       } else if (error.message) {
         toast.error(error.message);
       } else {
-        toast.error('Erro ao criar funcionário. Tente novamente.');
+        toast.error('Erro ao editar funcionário. Tente novamente.');
       }
-      // Não navegar em caso de erro - manter o usuário no formulário
     } finally {
       setLoading(false);
     }
@@ -117,15 +208,30 @@ const CreateEmployeePage: React.FC = () => {
 
   const handleSuccessModalClose = () => {
     setShowSuccessModal(false);
-    // Navegar para a página de login conforme especificação
-    navigate(ROUTES.LOGIN);
+    navigate(ROUTES.EMPLOYEES);
   };
+
+  if (loadingEmployee) {
+    return (
+      <div className="page-container">
+        <div className="page-header">
+          <h1>
+            <i className="ri-user-edit-line"></i> Editar Funcionário
+          </h1>
+        </div>
+        <div style={{ textAlign: 'center', padding: '2rem' }}>
+          <i className="ri-loader-4-line spin" style={{ fontSize: '2rem' }}></i>
+          <p>Carregando dados do funcionário...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="page-container">
       <div className="page-header">
         <h1>
-          <i className="ri-user-add-line"></i> Criar Funcionário
+          <i className="ri-user-edit-line"></i> Editar Funcionário
         </h1>
         <button
           className="btn-secondary"
@@ -238,7 +344,7 @@ const CreateEmployeePage: React.FC = () => {
 
         <div className="form-group">
           <label htmlFor="password">
-            <i className="ri-lock-line"></i> Senha *
+            <i className="ri-lock-line"></i> Nova Senha (deixe em branco para manter a atual)
           </label>
           <input
             type="password"
@@ -246,8 +352,8 @@ const CreateEmployeePage: React.FC = () => {
             name="password"
             value={formData.password}
             onChange={handleInputChange}
-            required
             disabled={loading}
+            placeholder="Deixe em branco para manter a senha atual"
           />
         </div>
 
@@ -299,11 +405,11 @@ const CreateEmployeePage: React.FC = () => {
           <button type="submit" className="btn-primary" disabled={loading}>
             {loading ? (
               <>
-                <i className="ri-loader-4-line spin"></i> Criando...
+                <i className="ri-loader-4-line spin"></i> Salvando...
               </>
             ) : (
               <>
-                <i className="ri-save-line"></i> Criar Funcionário
+                <i className="ri-save-line"></i> Salvar Alterações
               </>
             )}
           </button>
@@ -319,7 +425,7 @@ const CreateEmployeePage: React.FC = () => {
               Sucesso!
             </Dialog.Title>
             <Dialog.Description className="dialog-description">
-              Funcionário criado com sucesso!
+              Funcionário editado com sucesso!
             </Dialog.Description>
             <div className="dialog-actions">
               <button
@@ -336,4 +442,4 @@ const CreateEmployeePage: React.FC = () => {
   );
 };
 
-export default CreateEmployeePage;
+export default EditEmployeePage;
