@@ -1,4 +1,3 @@
-using Biss.MultiSinkLogger.Extensions;
 using Biss.EmployeeManagement.Api.Middleware;
 using Biss.EmployeeManagement.Domain.Constants;
 using Microsoft.AspNetCore.ResponseCompression;
@@ -19,10 +18,16 @@ namespace Biss.EmployeeManagement.Api.Extensions
             // Adicionar compressão de resposta
             app.UseResponseCompression();
 
-            app.UseStructuredLogging();
+            // Middlewares de logging - ordem é importante!
+            // 1. GlobalExceptionHandler PRIMEIRO para tratar exceções antes de qualquer log
+            // Isso garante que a resposta seja enviada corretamente antes de qualquer log adicional
             app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
-            app.UseExceptionLogging();
-            app.UseCustomLogging();
+            
+            // 2. StructuredLogging para capturar todas as requisições (usa Serilog)
+            app.UseStructuredLogging();
+            
+            // 3. HTTP Logging do ASP.NET Core para logar requisições/respostas
+            app.UseHttpLogging();
             
             // Middlewares de segurança
             app.UseMiddleware<SecurityHeadersMiddleware>();

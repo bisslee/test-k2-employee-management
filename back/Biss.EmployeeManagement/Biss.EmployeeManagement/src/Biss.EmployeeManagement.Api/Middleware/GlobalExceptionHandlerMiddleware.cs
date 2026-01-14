@@ -37,6 +37,13 @@ namespace Biss.EmployeeManagement.Api.Middleware
 
         private async Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
+            // Ignorar ObjectDisposedException se a resposta já foi enviada
+            if (exception is ObjectDisposedException && context.Response.HasStarted)
+            {
+                _logger.LogWarning("Response stream was disposed after response was sent. This is usually harmless.");
+                return;
+            }
+
             var correlationId = context.Request.Headers["X-Correlation-ID"].FirstOrDefault() 
                 ?? context.Response.Headers["X-Correlation-ID"].FirstOrDefault() 
                 ?? Guid.NewGuid().ToString();
@@ -46,6 +53,13 @@ namespace Biss.EmployeeManagement.Api.Middleware
             _logger.LogError(exception, 
                 "Unhandled exception occurred. CorrelationId: {CorrelationId}, TraceId: {TraceId}, Path: {Path}, Method: {Method}", 
                 correlationId, traceId, context.Request.Path, context.Request.Method);
+
+            // Se a resposta já foi iniciada, não podemos modificar
+            if (context.Response.HasStarted)
+            {
+                _logger.LogWarning("Response has already started, cannot send error response");
+                return;
+            }
 
             var errorResponse = CreateErrorResponse(exception, correlationId, traceId);
             var statusCode = GetStatusCode(exception);
@@ -59,7 +73,7 @@ namespace Biss.EmployeeManagement.Api.Middleware
                 WriteIndented = _environment.IsDevelopment()
             });
 
-            if (!context.Response.HasStarted && context.Response.Body.CanWrite)
+            if (context.Response.Body.CanWrite)
             {
                 try
                 {
@@ -67,7 +81,13 @@ namespace Biss.EmployeeManagement.Api.Middleware
                 }
                 catch (ObjectDisposedException)
                 {
-                    // Stream já foi fechado, não faz nada
+                    // Stream já foi fechado, não faz nada - apenas log
+                    _logger.LogWarning("Response stream was already disposed when trying to write error response");
+                }
+                catch (Exception ex)
+                {
+                    // Outros erros ao escrever resposta - log mas não re-lançar
+                    _logger.LogError(ex, "Error writing error response to stream");
                 }
             }
         }

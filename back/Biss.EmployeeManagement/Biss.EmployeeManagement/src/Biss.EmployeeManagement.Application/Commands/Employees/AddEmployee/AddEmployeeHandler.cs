@@ -6,6 +6,7 @@ using Biss.EmployeeManagement.Domain.Entities;
 using Biss.EmployeeManagement.Domain.Exceptions;
 using Biss.EmployeeManagement.Domain.Repositories;
 using Biss.EmployeeManagement.Domain.Specifications.Employees;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
@@ -57,6 +58,9 @@ namespace Biss.EmployeeManagement.Application.Commands.Employees.AddEmployee
             try
             {
                 var entity = Mapper.Map<Employee>(request);
+                
+                // Normalizar documento antes de validar e salvar (remover formatação)
+                entity.Document = NormalizeDocument(entity.Document);
                 
                 // Validar regras de negócio usando Specifications
                 var emailSpecification = new EmployeeEmailMustBeUniqueSpecification(ReadRepository);
@@ -113,11 +117,47 @@ namespace Biss.EmployeeManagement.Application.Commands.Employees.AddEmployee
                 Logger.LogWarning("Employee document already exists. Document: {Document}", request.Document);
                 return ResponseBuilder.BuildErrorResponse<AddEmployeeResponse, Employee>(ex.Message, statusCode: 400);
             }
+            catch (Microsoft.EntityFrameworkCore.DbUpdateException dbEx) when (dbEx.InnerException?.Message?.Contains("UNIQUE constraint") == true || 
+                                                                               dbEx.InnerException?.Message?.Contains("Cannot insert duplicate") == true ||
+                                                                               dbEx.InnerException?.Message?.Contains("duplicate key") == true)
+            {
+                // Capturar violação de índice único do banco de dados
+                // Isso pode acontecer se a validação não detectou o duplicado (race condition)
+                var errorMessage = "O documento ou email informado já está em uso.";
+                var innerMessage = dbEx.InnerException?.Message ?? dbEx.Message;
+                
+                if (innerMessage.Contains("Document") == true || 
+                    innerMessage.Contains("IX_Employees_Document") == true ||
+                    innerMessage.Contains("Document") == true)
+                {
+                    errorMessage = "O documento informado já está cadastrado.";
+                }
+                else if (innerMessage.Contains("Email") == true || 
+                         innerMessage.Contains("IX_Employees_Email") == true)
+                {
+                    errorMessage = "O email informado já está cadastrado.";
+                }
+                
+                Logger.LogWarning("Database unique constraint violation. Email: {Email}, Document: {Document}, InnerException: {InnerException}", 
+                    request.Email, request.Document, innerMessage);
+                return ResponseBuilder.BuildErrorResponse<AddEmployeeResponse, Employee>(errorMessage, statusCode: 400);
+            }
             catch (Exception ex)
             {
-                Logger.LogError(ex, "Unexpected error occurred while creating employee. Email: {Email}", request.Email);
-                throw; // Deixar o middleware global tratar a exceção
+                Logger.LogError(ex, "Unexpected error occurred while creating employee. Email: {Email}, Document: {Document}", 
+                    request.Email, request.Document);
+                return ResponseBuilder.BuildErrorResponse<AddEmployeeResponse, Employee>(
+                    "Ocorreu um erro ao criar o funcionário. Tente novamente.", statusCode: 500);
             }
+        }
+
+        private static string NormalizeDocument(string document)
+        {
+            if (string.IsNullOrWhiteSpace(document))
+                return string.Empty;
+
+            // Remover pontos, traços, espaços e barras - manter apenas dígitos
+            return new string(document.Where(char.IsDigit).ToArray());
         }
     }
 }

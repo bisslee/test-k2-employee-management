@@ -39,9 +39,18 @@ namespace Biss.EmployeeManagement.Application.Queries.Employees.GetEmployees
             {
                 request = request.LoadPagination();
 
+                // Se FirstName e LastName são iguais e não vazios, significa busca por termo único
+                // Nesse caso, buscar em qualquer um dos campos (OR)
+                bool isSingleTermSearch = !string.IsNullOrEmpty(request.FirstName) 
+                    && !string.IsNullOrEmpty(request.LastName) 
+                    && request.FirstName == request.LastName;
+
                 Expression<Func<Employee, bool>> predicate = employee =>
-                    (string.IsNullOrEmpty(request.FirstName) || employee.FirstName.Contains(request.FirstName))
-                    && (string.IsNullOrEmpty(request.LastName) || employee.LastName.Contains(request.LastName))
+                    !employee.IsDeleted // Filtrar registros deletados (soft delete)
+                    && (isSingleTermSearch 
+                        ? (employee.FirstName.Contains(request.FirstName) || employee.LastName.Contains(request.FirstName))
+                        : ((string.IsNullOrEmpty(request.FirstName) || employee.FirstName.Contains(request.FirstName))
+                            && (string.IsNullOrEmpty(request.LastName) || employee.LastName.Contains(request.LastName))))
                     && (string.IsNullOrEmpty(request.Email) || employee.Email.Contains(request.Email))
                     && (string.IsNullOrEmpty(request.Document) || employee.Document.Contains(request.Document))
                     && ((request.StartBirthDate == null || employee.BirthDate >= request.StartBirthDate)

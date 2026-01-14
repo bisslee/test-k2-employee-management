@@ -1,6 +1,6 @@
 # 🐳 Docker Configuration
 
-Configuração Docker para o projeto Employee Management, incluindo SQL Server e API.
+Configuração Docker para o projeto Employee Management, incluindo SQL Server, API e Frontend.
 
 ## 📋 Pré-requisitos
 
@@ -26,9 +26,11 @@ cp env.template .env
 - `DB_USER`: Nome do usuário SQL do projeto (padrão: `employee_user`)
 - `DB_USER_PASSWORD`: Senha do usuário SQL do projeto (padrão: `Employee@Password123`)
 - `API_PORT`: Porta da API (padrão: `8080`)
+- `FRONTEND_PORT`: Porta do Frontend (padrão: `5173`)
+- `FRONTEND_API_URL`: URL da API para o Frontend (padrão: `http://api:8080` - dentro da rede Docker)
 - `JWT_SECRET_KEY`: Chave secreta para geração de tokens JWT (padrão: `YourSuperSecretKeyForJWTTokenGenerationMustBeAtLeast32CharactersLong!`)
 
-### 2. Subir todos os serviços (SQL Server + API)
+### 2. Subir todos os serviços (SQL Server + API + Frontend)
 
 ```bash
 docker-compose up -d --build
@@ -40,9 +42,10 @@ docker-compose up -d --build
 docker-compose ps
 ```
 
-### 4. Acessar a API
+### 4. Acessar os serviços
 
-Após os containers iniciarem, a API estará disponível em:
+Após os containers iniciarem, os serviços estarão disponíveis em:
+- **Frontend**: http://localhost:5173
 - **API**: http://localhost:8080
 - **Swagger**: http://localhost:8080/swagger
 - **Health Check**: http://localhost:8080/health
@@ -107,8 +110,9 @@ Todos os serviços estão na rede `biss-employee-network`, permitindo comunicaç
 
 ### Serviços
 
-- **sqlserver**: SQL Server 2022
+- **sqlserver**: SQL Server 2022 (porta 1433)
 - **api**: API .NET 8 (porta 8080)
+- **frontend**: Frontend React + Vite (porta 5173)
 
 ## 📝 Scripts de inicialização
 

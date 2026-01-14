@@ -32,8 +32,14 @@ namespace Biss.EmployeeManagement.Domain.Specifications.Employees
             if (employee == null || string.IsNullOrWhiteSpace(employee.Document))
                 return true;
 
-            var existingEmployees = await EmployeeRepository.Find(e => e.Document == employee.Document);
-            var existingEmployee = existingEmployees?.FirstOrDefault();
+            // Normalizar documento removendo formatação (pontos, traços, espaços)
+            var normalizedDocument = NormalizeDocument(employee.Document);
+
+            // Buscar employees e normalizar documentos para comparação
+            // Buscar por documentos que começam com os primeiros dígitos para otimizar
+            var allEmployees = await EmployeeRepository.Find(e => !string.IsNullOrWhiteSpace(e.Document));
+            var existingEmployee = allEmployees?
+                .FirstOrDefault(e => NormalizeDocument(e.Document) == normalizedDocument);
 
             if (existingEmployee == null)
                 return true;
@@ -43,6 +49,15 @@ namespace Biss.EmployeeManagement.Domain.Specifications.Employees
                 return true;
 
             throw new EmployeeDocumentAlreadyExistsException(employee.Document, existingEmployee.Id);
+        }
+
+        private static string NormalizeDocument(string document)
+        {
+            if (string.IsNullOrWhiteSpace(document))
+                return string.Empty;
+
+            // Remover pontos, traços, espaços e barras
+            return new string(document.Where(char.IsDigit).ToArray());
         }
 
         public string ErrorMessage => "Document already exists.";

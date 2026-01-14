@@ -33,9 +33,9 @@ namespace Biss.EmployeeManagement.Application.Queries.Employees.GetEmployeeByKey
             {
                 var result = await Repository.GetByIdAsync(request.Id);
                 
-                if (result == null)
+                if (result == null || result.IsDeleted)
                 {
-                    Logger.LogWarning("Employee not found. EmployeeId: {EmployeeId}", request.Id);
+                    Logger.LogWarning("Employee not found or deleted. EmployeeId: {EmployeeId}", request.Id);
                     return ResponseBuilder.BuildNotFoundResponse<GetEmployeeByKeyResponse, Employee>("Employee not found");
                 }
 
